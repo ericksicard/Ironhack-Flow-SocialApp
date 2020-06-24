@@ -78,9 +78,9 @@ const update = async (params, credentials, user) => {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + credentials.t
             },
-            body: JSON.stringify(user)
+            body: user
         })
-        return response.json();
+        return await response.json();
     }
     catch(err) { console.log(err) }
 }

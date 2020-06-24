@@ -124,7 +124,7 @@ export default function EditProfile({ match }) {
                 setValues({ ...values, error: data.error })
             }
             else {
-                setValues({ ...values, userId: data._id, redirectToProfile: true })
+                setValues({ ...values, redirectToProfile: true })
             }
         })
     }
@@ -134,7 +134,7 @@ export default function EditProfile({ match }) {
         const value = name === 'photo'
             ? event.target.files[0]
             : event.target.value
-        setValues({ ...values, [name]: event.target.value })
+        setValues({ ...values, [name]: value })
     }
 
   /*Depending on the response from the server, the user will either see an error message or be redirected to

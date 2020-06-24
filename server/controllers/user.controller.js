@@ -116,7 +116,6 @@ response to the requesting client.
 */
 const update = async (req, res) => {
     let form = new formidable.IncomingForm()
-    
     form.keepExtensions = true
     form.parse(req, async (err, fields, files) => {
         if (err) {
