@@ -10,6 +10,15 @@ messages when a Mongoose error occurs.*/
 import errorHandler from '../helpers/dbErrorHandler';
 import User from '../models/user.model';
 
+/*The formidable Node module will allow the server to read the multipart form data and give us
+access to the fields and the file, if there are any. If there is a file, formidable will
+store it temporarily in the filesystem. We will read it from the filesystem using the fs
+module, which will retrieve the file type and data, and store it in the photo field in
+the user model.
+The formidable code will go in the "update" controller.*/
+import formidable from 'formidable'
+import fs from 'fs'
+
 //Creating a new user
 /*When the Express app gets a POST request at '/api/users', it calls the create function.
 This function creates a new user with the user JSON object that's received in the POST request from
@@ -106,20 +115,37 @@ user object is cleaned by removing sensitive data, such as hashed_password and s
 response to the requesting client.
 */
 const update = async (req, res) => {
-    try {
+    let form = new formidable.IncomingForm()
+    
+    form.keepExtensions = true
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            return res.status(400).json({
+                error: 'Photo could not be uploaded'
+            })
+        }
+        
         let user = req.profile;
-        user = extend( user, req.body );
+        user = extend( user, fields );
         user.updated = Date.now();
-        await user.save();
-        req.profile.hashed_password = undefined;
-        req.profile.salt = undefined;
-        res.json(user);
-    }
-    catch (err) {
-        return res.status(400).json({
-            error: errorHandler.getErrorMessage(err)
-        })
-    }
+
+        if (files.photo) {
+            user.photo.data = fs.readFileSync(files.photo.path)
+            user.photo.contentType = files.photo.type
+        }
+
+        try {        
+            await user.save();
+            req.profile.hashed_password = undefined;
+            req.profile.salt = undefined;
+            res.json(user);
+        }
+        catch (err) {
+            return res.status(400).json({
+                error: errorHandler.getErrorMessage(err)
+            })
+        }
+    })
 }
 
 //Deleting
