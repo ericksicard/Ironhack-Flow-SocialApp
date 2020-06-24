@@ -32,6 +32,15 @@ router.route('/api/users')
     .get(userCtrl.list)
     .post(userCtrl.create)
 
+/*The first one is a routes to the photo stored in the database for each user, and the second
+route will fetch a default photo if the given user did not upload a profile photo.
+*/
+router.route('/api/users/photo/:userId')
+    .get(userCtrl.photo, userCtrl.defaultPhoto)
+
+router.route('/api/users/defaultphoto')
+    .get(userCtrl.defaultPhoto)
+
 /*The route to read a user's information only needs authentication verification, whereas
 the update and delete routes should check for both authentication and authorization
 before these CRUD operations are executed.
@@ -40,6 +49,7 @@ router.route('/api/users/:userId')
     .get(authCtrl.requireSignin, userCtrl.read)
     .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
     .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.remove)
+
 
 router.param('userId', userCtrl.userByID)
 

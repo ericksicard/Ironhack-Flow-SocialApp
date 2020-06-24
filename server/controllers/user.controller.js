@@ -1,6 +1,8 @@
 /*This file contains the definitions of the controller methods that are used in the user route
 declarations as callbacks to be executed when a route request is received by the server.*/
 
+import profileImage from './../../client/assets/images/profile_pic.png'
+
 /*lodash is a JavaScript library that provides utility functions for common programming tasks,
 including the manipulation of arrays and objects.*/
 import extend from 'lodash/extend';
@@ -168,4 +170,18 @@ const remove = async (req, res) => {
     }
 }
 
-export default { create, userByID, read, list, remove, update }
+/*We will look for the photo in the photo controller method and, if found, send it in the response to the request at the photo route;
+otherwise, we'll call next() to return the default photo. */
+const photo = (req, res, next) => {
+    if (req.profile.photo.data) {
+        res.set('Content-Type', req.profile.photo.contentType)
+        return res.send(req.profile.photo.data)
+    }
+    next()
+}
+
+const defaultPhoto = (req, res) => {
+    return res.sendFile(process.cwd() + profileImage)
+}
+
+export default { create, userByID, read, list, remove, update, photo, defaultPhoto }

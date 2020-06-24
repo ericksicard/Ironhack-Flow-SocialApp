@@ -72,7 +72,7 @@ export default function EditProfile({ match }) {
         open: false,
         error: '',
         redirectToProfile: false,
-        id: ''
+        userId: ''
     });
     
     /* "EditProfile" will load the user information by fetching with "read" in useEffect using the userId
@@ -92,7 +92,7 @@ export default function EditProfile({ match }) {
                 setValues({ ...values, error: data.error })
             }
             else {
-                setValues({ ...values, id: data._id, name: data.name, email: data.email, about: data.about })
+                setValues({ ...values, userId: data._id, name: data.name, email: data.email, about: data.about })
             }
         })
 
