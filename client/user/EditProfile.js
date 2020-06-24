@@ -101,21 +101,23 @@ export default function EditProfile({ match }) {
         }
     }, [match.params.userId])
 
-   /*
-   On form submit, the component will call the "update" fetch method with the userId, JWT and updated user data.   
+   /* Uploading files to the server with a form requires a multipart form submission. So we will use the
+   FormData API to store the form data in the format needed for encoding in the multipart/formdata type.
+   On form submission, we need to initialize FormData and append the values from the fields that were updated,
+   then the component will call the "update" fetch method with the userId, JWT and updated user data.   
    */
     const clickSubmit = () => {
-        const user = {
-            name: values.name || undefined,
-            about: values.about || undefined,
-            email: values.email || undefined,
-            password: values.password || undefined
-        }
+        let userData = new FormData()
+        values.name && userData.append('name', values.name)
+        values.email && userData.append('email', values.email)
+        values.passoword && userData.append('passoword', values.passoword)
+        values.about && userData.append('about', values.about)
+        values.photo && userData.append('photo', values.photo)
 
         update(
             { userId: match.params.userId },
             { t: jwt.token },
-            user
+            userData
         )
         .then( data => {
             if (data && data.error) {
@@ -127,7 +129,11 @@ export default function EditProfile({ match }) {
         })
     }
 
+    // Function to store input values for both the text fields and the file input
     const handleChange = (event, name) => {
+        const value = name === 'photo'
+            ? event.target.files[0]
+            : event.target.value
         setValues({ ...values, [name]: event.target.value })
     }
 
