@@ -16,6 +16,8 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
+import Avatar from '@material-ui/core/Avatar'
+import FileUpload from '@material-ui/icons/AddPhotoAlternate';
 
 import auth from './../auth/auth-helper';
 import { read, update } from './api-user.js';
@@ -142,6 +144,34 @@ export default function EditProfile({ match }) {
                 <Typography variant="h6" className={classes.title}>
                     Edit Profile
                 </Typography>
+                
+                {/*The HTML5 file input type lets the user select an image from their local files.
+                The file input will return the filename in the change event when the user selects a file.
+                
+                We apply display:none to hide the input element from the view, then add a Material-UI button
+                inside the label for this file input. This way, the view displays the Material-UI button
+                instead of the HTML5 file input element.*/}
+                <input 
+                    accept='image/*'
+                    onChange={ event => handleChange(event, 'photo')}
+                    className={classes.input}
+                    id='icon-button-file'
+                    type='file'
+                />
+                {/*When the Button's component prop is set to span, the Button component renders as a span element
+                inside the label element. A click on the Upload span or label is registered by the file input with
+                the same ID as the label, and as a result, the file select dialog is opened. Once the user selects
+                a file, we can set it to state in the call to handleChange(...) and display the name in the view.*/}
+                <label htmlFor='icon-button-file'>
+                    <Button variant="contained" color="default" component="span">
+                        Upload
+                        <FileUpload />
+                    </Button>
+                </label>
+                <span className={classes.filename}>
+                    {values.photo ? values.photo.name : ''}
+                </span>
+                <br/>
                 <TextField
                     id="name"
                     label="Name"

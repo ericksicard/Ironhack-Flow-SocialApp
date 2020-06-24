@@ -32,6 +32,12 @@ const UserSchema = new mongoose.Schema({
     about: {
         type: String,
         trim: true
+    },
+    /*An image file that's uploaded by the user from the client- side will be converted into
+    binary data and stored in this photo field.*/
+    photo: {
+        data: Buffer,
+        contentType: String
     }
 })
 
