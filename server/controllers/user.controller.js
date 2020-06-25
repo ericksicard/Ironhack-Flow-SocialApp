@@ -79,6 +79,10 @@ before propagating it to the next function that's specific to the request that c
 const userByID = async (req, res, next, id) => {
     try {
         let user = await User.findById(id)
+        // The names and IDs of the users referenced in the following and followers arrays.
+        .populate('following', '_id name')
+        .populate('followers', '_id name')
+        .exec()
         if (!user) {
             return res.status(400).json({
                 error: 'User not found'
