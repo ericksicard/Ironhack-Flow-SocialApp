@@ -1,4 +1,4 @@
-import cloudinary from 'cloudinary'
+var cloudinary = require('cloudinary').v2
 require('dotenv').config()
 
 cloudinary.config({
@@ -7,4 +7,4 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 })
 
-export default cloudinary;
+export default cloudinary

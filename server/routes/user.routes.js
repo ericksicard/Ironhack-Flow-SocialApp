@@ -36,10 +36,10 @@ router.route('/api/users')
 route will fetch a default photo if the given user did not upload a profile photo.
 */
 router.route('/api/users/photo/:userId')
-    .get(userCtrl.photo, userCtrl.defaultPhoto)
+    .get(userCtrl.photo)
 
-router.route('/api/users/defaultphoto')
-    .get(userCtrl.defaultPhoto)
+//router.route('/api/users/defaultphoto')
+//    .get(userCtrl.defaultPhoto)
 
 /*The route to read a user's information only needs authentication verification, whereas
 the update and delete routes should check for both authentication and authorization

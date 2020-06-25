@@ -36,7 +36,8 @@ const UserSchema = new mongoose.Schema({
     /*An image file that's uploaded by the user from the client- side will be converted into
     binary data and stored in this photo field.*/
     photo: {
-        type: String
+        type: String,
+        default: '../../client/assets/images/profile_pic.png'
     }
 })
 

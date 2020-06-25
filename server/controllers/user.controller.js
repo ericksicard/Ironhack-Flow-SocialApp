@@ -19,10 +19,7 @@ module, which will retrieve the file type and data, and store it in the photo fi
 the user model.
 The formidable code will go in the "update" controller.*/
 import formidable from 'formidable'
-import fs from 'fs'
 import cloudinary from '../../config/cloudinary-config'
-import { result } from 'lodash';
-import { json } from 'body-parser';
 
 
 //Creating a new user
@@ -135,7 +132,10 @@ const update = (req, res) => {
         user.updated = Date.now();
         
         await cloudinary.uploader.upload(files.photo.path,
-            result => {
+            {use_filename: true,
+            folder: 'MERN_SocialApp'
+            },
+            function(err, result) {
                 user.photo = result.url
                 console.log('console1: ', {user})
             }
@@ -180,16 +180,15 @@ const remove = async (req, res) => {
 /*We will look for the photo in the photo controller method and, if found, send it in the response to the request at the photo route;
 otherwise, we'll call next() to return the default photo. */
 const photo = (req, res, next) => {
-    console.log('profile pic: ', typeof req.profile.photo)
-    if (req.profile.photo) {
-        res.set('Content-Type', 'text/plain')
+    //if (req.profile.photo) {
+        //res.set('Content-Type', 'text/plain')
         return res.send(req.profile.photo)
-    }
-    next()
+    //}
+    //next()
 }
 
-const defaultPhoto = (req, res) => {
-    return res.sendFile(process.cwd() + profileImage)
-}
+//const defaultPhoto = (req, res) => {
+//    return res.sendFile(process.cwd() + profileImage)
+//}
 
-export default { create, userByID, read, list, remove, update, photo, defaultPhoto }
+export default { create, userByID, read, list, remove, update, photo }
