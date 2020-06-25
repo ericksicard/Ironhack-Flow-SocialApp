@@ -263,4 +263,16 @@ const removeFollower = async (req, res) => {
     }
 }
 
-export default { create, userByID, read, list, remove, update, photo }
+export default { 
+    create,
+    userByID,
+    read,
+    list,
+    remove,
+    update,
+    photo,
+    addFollowing,
+    addFollower,
+    removeFollowing,
+    removeFollower
+}

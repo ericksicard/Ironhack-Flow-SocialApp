@@ -2,6 +2,8 @@
 /*Here we will add methods for accessing each of the user CRUD API endpoints, which the React components
 can use to exchange user data with the server and database as required. */
 
+import { response } from "express";
+
 //Creating a user
 /*The create method will take user data from the view component, which is where we will invoke this method.
 Then, it will use fetch to make a POST call at the create API route, '/api/users', to create a new user in
@@ -103,5 +105,40 @@ const remove = async (params, credentials) => {
     }
     catch(err) { console.log(err) }
 }
+
+//Follow fetch method
+const follow = async (params, credentials, followId) => {
+    try {
+        let response = await fetch('/api/users/follow/', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t 
+            },
+            body: JSON.stringify({ userId:params.userId, followId: followId })
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}
+
+//Unfollow fetch method
+const unfollow = async (params, credentials, unfollowId) => {
+    try {
+        let response = await fetch('/api/users/unfollow/', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t 
+            },
+            body: JSON.stringify({ userId:params.userId, unfollowId: unfollowId })
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}
+
 
 export { create, list, read, update, remove };
