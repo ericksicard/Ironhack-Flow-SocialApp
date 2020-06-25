@@ -37,8 +37,20 @@ const UserSchema = new mongoose.Schema({
     binary data and stored in this photo field.*/
     photo: {
         type: String,
-        default: '../../client/assets/images/profile_pic.png'
-    }
+        default: './../../client/assets/images/profilepic.png'
+    },
+    /*To store the list of following and followers in the database, we will need to update the
+    user model with two arrays of user references. These references will point to the users in
+    the collection being followed by or following the given user.    
+    */
+    following: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    followers: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }]
 })
 
 /*The password string that's provided by the user is not stored directly in the user
