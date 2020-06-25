@@ -20,6 +20,10 @@ the user model.
 The formidable code will go in the "update" controller.*/
 import formidable from 'formidable'
 import fs from 'fs'
+import cloudinary from '../../config/cloudinary-config'
+import { result } from 'lodash';
+import { json } from 'body-parser';
+
 
 //Creating a new user
 /*When the Express app gets a POST request at '/api/users', it calls the create function.
@@ -54,7 +58,7 @@ to the requesting client.
 */
 const list = async (req, res) => {
     try {
-        let users = await User.find().select('name email updated created')
+        let users = await User.find().select('name email updated created photo')
         res.json(users)
     }
     catch (err) {
@@ -116,36 +120,39 @@ is populated with the current date to reflect the last updated timestamp. Upon s
 user object is cleaned by removing sensitive data, such as hashed_password and salt, before sending the user object in the
 response to the requesting client.
 */
-const update = async (req, res) => {
+const update = (req, res) => {
     let form = new formidable.IncomingForm()
     form.keepExtensions = true
-    form.parse(req, async (err, fields, files) => {
+    form.parse(req, async (err, fields, files) => {        
         if (err) {
             return res.status(400).json({
                 error: 'Photo could not be uploaded'
             })
-        }
+        }      
         
         let user = req.profile;
         user = extend( user, fields );
         user.updated = Date.now();
-
-        if (files.photo) {
-            user.photo.data = fs.readFileSync(files.photo.path)
-            user.photo.contentType = files.photo.type
-        }
+        
+        await cloudinary.uploader.upload(files.photo.path,
+            result => {
+                user.photo = result.url
+                console.log('console1: ', {user})
+            }
+        )
 
         try {        
             await user.save();
             req.profile.hashed_password = undefined;
             req.profile.salt = undefined;
+            console.log('console2: ', {user})
             res.json(user);
         }
         catch (err) {
             return res.status(400).json({
                 error: errorHandler.getErrorMessage(err)
             })
-        }
+        }        
     })
 }
 
@@ -173,9 +180,10 @@ const remove = async (req, res) => {
 /*We will look for the photo in the photo controller method and, if found, send it in the response to the request at the photo route;
 otherwise, we'll call next() to return the default photo. */
 const photo = (req, res, next) => {
-    if (req.profile.photo.data) {
-        res.set('Content-Type', req.profile.photo.contentType)
-        return res.send(req.profile.photo.data)
+    console.log('profile pic: ', typeof req.profile.photo)
+    if (req.profile.photo) {
+        res.set('Content-Type', 'text/plain')
+        return res.send(req.profile.photo)
     }
     next()
 }

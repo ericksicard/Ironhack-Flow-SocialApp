@@ -49,16 +49,7 @@ export default function Profile({ match }) {
     const classes = useStyles();
     const [ user, setUser ] = useState({});
     const [ redirectToSignin, setRedirectToSignin ] = useState(false);
-
-    /*With the photo URL routes set up to retrieve the photo, we use these in the img element's src attribute
-    to load the photo in the view.
-    To ensure the img element reloads in the Profile view after the photo is updated, we have to add a time value
-    to the photo URL to bypass the browser's default image caching behavior.
-    */
-    const photoUrl = user._id
-        ? `/api/users/photo/${user._id}?${new Date().getTime()}`
-        : '/api/users/defaultphoto'
-
+    
     /*The Profile component should fetch user information and render the view with these details.
     The "useEffect" hook uses the "match.params.userId" value and calls the "read" user fetch method.
     Since this method also requires credentials to authorize the signed-in user, the JWT is retrieved
@@ -95,6 +86,16 @@ export default function Profile({ match }) {
         }
     }, [match.params.userId])
 
+    /*With the photo URL routes set up to retrieve the photo, we use these in the img element's src attribute
+    to load the photo in the view.
+    To ensure the img element reloads in the Profile view after the photo is updated, we have to add a time value
+    to the photo URL to bypass the browser's default image caching behavior.
+    
+    const photoUrl = user._id
+    ? `/api/users/photo/${user._id}?${new Date().getTime()}`
+    : '/api/users/defaultphoto'
+   */
+
     /*If the current user is not authenticated, he's gonna be redirected to the Sign In view.*/
     if ( redirectToSignin ) {
         return <Redirect to={'/signin'}/>
@@ -119,7 +120,7 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar src={photoUrl} />
+                        <Avatar src={user.photo} />
                     </ListItemAvatar>
                     <ListItemText 
                         primary={user.name}
