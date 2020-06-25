@@ -195,4 +195,72 @@ const photo = (req, res, next) => {
 //    return res.sendFile(process.cwd() + profileImage)
 //}
 
+/*This method will update the "following" array for the current user by pushing the followed user's reference into the array.*/
+const addFollowing = async (req, res, next) => {
+    try{
+        await User.findByIdAndUpdate(req.body.userId,
+            {$push: {following: req.body.followId}})
+        next()
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(error)
+        })
+    }
+}
+/*On successful update of the following array, next() is invoked, and as a result, the addFollower method is executed to add the
+current user's reference to the followed user's followers array.*/
+const addFollower = async (req, res) => {
+    try {
+        let result = await User.findByIdAndUpdate(req.body.followId,
+            {$push: {followers: req.body.userId}},
+            {new: true})
+            .populate('following', '_id name')
+            .populate('followers', '_id name')
+            exec()
+        result.hashed_password = undefined
+        result.salt = undefined
+        res.json(result)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
+
+/*For unfollowing, the implementation is similar. The removeFollowing and removeFollower controller methods update the respective
+'following' and 'followers' arrays by removing the user references with $pull instead of $push. removeFollowing and removeFollower.*/
+const removeFollowing = async (req, res, next) => {
+    try{
+        await User.findByIdAndUpdate(req.body.userId,
+            {$pull: {following: req.body.unfollowId}})
+        next()
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(error)
+        })
+    }
+}
+
+const removeFollower = async (req, res) => {
+    try {
+        let result = await User.findByIdAndUpdate(req.body.unfollowId,
+            {$pull: {followers: req.body.userId}},
+            {new: true})
+            .populate('following', '_id name')
+            .populate('followers', '_id name')
+            exec()
+        result.hashed_password = undefined
+        result.salt = undefined
+        res.json(result)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
+
 export default { create, userByID, read, list, remove, update, photo }

@@ -41,6 +41,16 @@ router.route('/api/users/photo/:userId')
 //router.route('/api/users/defaultphoto')
 //    .get(userCtrl.defaultPhoto)
 
+/*When a user follows or unfollows another user from the view, both users' records in the database
+will be updated in response to the follow or unfollow requests.
+*/
+router.route('/api/users/follow')
+    .put(authCtrl.requireSignin, userCtrl.addFollowing, userCtrl.addFollower)
+
+router.route('/api/users/unfollow')
+    .put(authCtrl.requireSignin, userCtrl.removeFollowing, userCtrl.removeFollower)
+
+
 /*The route to read a user's information only needs authentication verification, whereas
 the update and delete routes should check for both authentication and authorization
 before these CRUD operations are executed.
