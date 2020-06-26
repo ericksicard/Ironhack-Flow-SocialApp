@@ -24,8 +24,9 @@ import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 
 import auth from '../auth/auth-helper';
-import {read} from './api-user.js';
-import { values } from 'lodash';
+import {read, follow} from './api-user.js';
+import FollowProfileButton from './FollowProfileButton'
+import jwt from 'express-jwt';
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -47,8 +48,14 @@ parameter value. This can be accessed as match.params.userId.
 */
 export default function Profile({ match }) {
     const classes = useStyles();
-    const [ user, setUser ] = useState({});
-    const [ redirectToSignin, setRedirectToSignin ] = useState(false);
+    const [ values, setValues ] = useState({
+        user: {
+            following:[],
+            followers:[]
+        },
+        redirectToSignin,
+        following: false
+    });
     
     /*The Profile component should fetch user information and render the view with these details.
     The "useEffect" hook uses the "match.params.userId" value and calls the "read" user fetch method.
@@ -74,10 +81,13 @@ export default function Profile({ match }) {
         )
         .then( data => {
             if (data && data.error) {
-                setRedirectToSignin(true)
+                setValues({ ...values, redirectToSignin: true })
             }
             else {
-                setUser(data)
+                /*checking whether the signed-in user is already following the user in the profile or not and set
+                the "following" value to the respective state*/
+                let following = checkFollow(data)
+                setValues({ ...values, user: data, following: following })
             }
         })
 
@@ -96,8 +106,34 @@ export default function Profile({ match }) {
     : '/api/users/defaultphoto'
    */
 
+    /*To determine the value to set in following, the "checkFollow" method will check if the signed-in user exists
+    in the fetched user's followers list, then return match if found; otherwise, it will return undefined if a
+    match is not found.*/
+    const checkFollow = (user) => {
+        const match  = user.followers.some( follower => follower._id == jwt.user._id )
+        return match;
+    }
+
+    /*Defining the click handler for FollowProfileButton so that the state of the Profile can be updated when the
+    follow or unfollow action completes*/
+    const clickFollowButton = (callApi) => {
+        callApi(
+            { userId: jwt.user._id },
+            { t: jwt.token },
+            values.user._id
+        )
+        .then( data => {
+            if (data.error) {
+                setValues({ ...values, error: data.error })
+            }
+            else {
+                setValues({ ...values, user: data, following: !values.following })
+            }
+        })
+    }
+
     /*If the current user is not authenticated, he's gonna be redirected to the Sign In view.*/
-    if ( redirectToSignin ) {
+    if ( values.redirectToSignin ) {
         return <Redirect to={'/signin'}/>
     }
 
@@ -127,15 +163,21 @@ export default function Profile({ match }) {
                         secondary={user.email}
                     />
                     { 
-                        auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id &&
-                        (<ListItemSecondaryAction>
+                        auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id
+                        ? (<ListItemSecondaryAction>
                             <Link to={'/user/edit/' + user._id}>
                                 <IconButton arial-label='Edit' color='primary'>
                                     <Edit />
                                 </IconButton>
                             </Link>
                             <DeleteUser userId={user._id} />
-                        </ListItemSecondaryAction>)
+                        </ListItemSecondaryAction>)                            
+                        :(
+                            /*The click handler definition takes the fetch API call as a parameter and is passed
+                            as a prop to FollowProfileButton, along with the following value when it is added to
+                            the Profile view.*/
+                            <FollowProfileButton following={values.following} onButtonClick={clickFollowButton} />
+                        )
                     }
                 </ListItem>
                 <Divider />
