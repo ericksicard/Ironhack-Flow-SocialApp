@@ -141,4 +141,4 @@ const unfollow = async (params, credentials, unfollowId) => {
 }
 
 
-export { create, list, read, update, remove };
+export { create, list, read, update, remove, follow, unfollow };
