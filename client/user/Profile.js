@@ -53,9 +53,10 @@ export default function Profile({ match }) {
             following:[],
             followers:[]
         },
-        redirectToSignin,
+        redirectToSignin: false,
         following: false
     });
+    const jwt = auth.isAuthenticated();
     
     /*The Profile component should fetch user information and render the view with these details.
     The "useEffect" hook uses the "match.params.userId" value and calls the "read" user fetch method.
@@ -72,7 +73,6 @@ export default function Profile({ match }) {
     useEffect( () => {
         const abortController = new AbortController();
         const signal = abortController.signal;
-        const jwt = auth.isAuthenticated();
 
         read(
             { userId: match.params.userId },
@@ -110,7 +110,9 @@ export default function Profile({ match }) {
     in the fetched user's followers list, then return match if found; otherwise, it will return undefined if a
     match is not found.*/
     const checkFollow = (user) => {
-        const match  = user.followers.some( follower => follower._id == jwt.user._id )
+        const match = values.user.followers.some( follower => {
+            return follower._id == jwt.user._id
+        })
         return match;
     }
 
@@ -156,35 +158,30 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar src={user.photo} />
+                        <Avatar src={values.user.photo} />
                     </ListItemAvatar>
                     <ListItemText 
-                        primary={user.name}
-                        secondary={user.email}
+                        primary={values.user.name}
+                        secondary={values.user.email}
                     />
                     { 
-                        auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id
+                        auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id
                         ? (<ListItemSecondaryAction>
-                            <Link to={'/user/edit/' + user._id}>
+                            <Link to={'/user/edit/' + values.user._id}>
                                 <IconButton arial-label='Edit' color='primary'>
                                     <Edit />
                                 </IconButton>
                             </Link>
-                            <DeleteUser userId={user._id} />
+                            <DeleteUser userId={values.user._id} />
                         </ListItemSecondaryAction>)                            
-                        :(
-                            /*The click handler definition takes the fetch API call as a parameter and is passed
-                            as a prop to FollowProfileButton, along with the following value when it is added to
-                            the Profile view.*/
-                            <FollowProfileButton following={values.following} onButtonClick={clickFollowButton} />
-                        )
+                        :(<FollowProfileButton following={values.following} onButtonClick={clickFollowButton}/>)
                     }
                 </ListItem>
                 <Divider />
                 <ListItem>
                     <ListItemText
-                        primary={user.about} 
-                        secondary={'Joined: ' + ( new Date(user.created) ).toDateString()}
+                        primary={values.user.about} 
+                        secondary={'Joined: ' + ( new Date(values.user.created) ).toDateString()}
                     />
                 </ListItem>
             </List>

@@ -1,7 +1,7 @@
 /*This file contains the definitions of the controller methods that are used in the user route
 declarations as callbacks to be executed when a route request is received by the server.*/
 
-import profileImage from './../../client/assets/images/profile_pic.png'
+//import profileImage from './../../client/assets/images/profile_pic.png'
 
 /*lodash is a JavaScript library that provides utility functions for common programming tasks,
 including the manipulation of arrays and objects.*/
@@ -141,7 +141,7 @@ const update = (req, res) => {
             },
             function(err, result) {
                 user.photo = result.url
-                console.log('console1: ', {user})
+                //console.log('console1: ', {user})
             }
         )
 
@@ -149,7 +149,7 @@ const update = (req, res) => {
             await user.save();
             req.profile.hashed_password = undefined;
             req.profile.salt = undefined;
-            console.log('console2: ', {user})
+            //console.log('console2: ', {user})
             res.json(user);
         }
         catch (err) {
@@ -217,7 +217,7 @@ const addFollower = async (req, res) => {
             {new: true})
             .populate('following', '_id name')
             .populate('followers', '_id name')
-            exec()
+            .exec()
         result.hashed_password = undefined
         result.salt = undefined
         res.json(result)
@@ -233,8 +233,7 @@ const addFollower = async (req, res) => {
 'following' and 'followers' arrays by removing the user references with $pull instead of $push. removeFollowing and removeFollower.*/
 const removeFollowing = async (req, res, next) => {
     try{
-        await User.findByIdAndUpdate(req.body.userId,
-            {$pull: {following: req.body.unfollowId}})
+        await User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}})
         next()
     }
     catch(err) {
@@ -251,7 +250,7 @@ const removeFollower = async (req, res) => {
             {new: true})
             .populate('following', '_id name')
             .populate('followers', '_id name')
-            exec()
+            .exec()
         result.hashed_password = undefined
         result.salt = undefined
         res.json(result)

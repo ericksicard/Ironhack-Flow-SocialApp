@@ -2,8 +2,6 @@
 /*Here we will add methods for accessing each of the user CRUD API endpoints, which the React components
 can use to exchange user data with the server and database as required. */
 
-import { response } from "express";
-
 //Creating a user
 /*The create method will take user data from the view component, which is where we will invoke this method.
 Then, it will use fetch to make a POST call at the create API route, '/api/users', to create a new user in

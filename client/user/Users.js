@@ -87,7 +87,6 @@ export default function Users() {
             </Typography>
             <List dense>
                 {users.map( (user, idx) => {
-                    console.log(user.photo)
                     return <Link to={'/user/' + user._id} key={idx}>
                                 <ListItem button>
                                     <ListItemAvatar>
