@@ -80,8 +80,8 @@ const userByID = async (req, res, next, id) => {
     try {
         let user = await User.findById(id)
         // The names and IDs of the users referenced in the following and followers arrays.
-        .populate('following', '_id name')
-        .populate('followers', '_id name')
+        .populate('following', '_id name photo')
+        .populate('followers', '_id name photo')
         .exec()
         if (!user) {
             return res.status(400).json({
@@ -215,8 +215,8 @@ const addFollower = async (req, res) => {
         let result = await User.findByIdAndUpdate(req.body.followId,
             {$push: {followers: req.body.userId}},
             {new: true})
-            .populate('following', '_id name')
-            .populate('followers', '_id name')
+            .populate('following', '_id name photo')
+            .populate('followers', '_id name photo')
             .exec()
         result.hashed_password = undefined
         result.salt = undefined
@@ -248,8 +248,8 @@ const removeFollower = async (req, res) => {
         let result = await User.findByIdAndUpdate(req.body.unfollowId,
             {$pull: {followers: req.body.userId}},
             {new: true})
-            .populate('following', '_id name')
-            .populate('followers', '_id name')
+            .populate('following', '_id name photo')
+            .populate('followers', '_id name photo')
             .exec()
         result.hashed_password = undefined
         result.salt = undefined

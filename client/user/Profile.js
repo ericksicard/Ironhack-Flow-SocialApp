@@ -24,9 +24,9 @@ import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 
 import auth from '../auth/auth-helper';
-import {read, follow} from './api-user.js';
+import { read } from './api-user.js';
 import FollowProfileButton from './FollowProfileButton'
-import jwt from 'express-jwt';
+import ProfileTabs from './../user/ProfileTabs'
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -110,7 +110,7 @@ export default function Profile({ match }) {
     in the fetched user's followers list, then return match if found; otherwise, it will return undefined if a
     match is not found.*/
     const checkFollow = (user) => {
-        const match = values.user.followers.some( follower => {
+        const match = user.followers.some( follower => {
             return follower._id == jwt.user._id
         })
         return match;
@@ -185,6 +185,7 @@ export default function Profile({ match }) {
                     />
                 </ListItem>
             </List>
+            <ProfileTabs user={values.user}/>
         </Paper>
     )    
 }

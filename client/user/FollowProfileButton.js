@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import Button from '@material-ui/core/Button'
 
-import { unfollow, follow } from './api-user.js'
+import { follow, unfollow } from './api-user.js'
 
 /*This component will show the Follow or Unfollow button, depending on whether the current user is
 already a follower of the user in the profile.
