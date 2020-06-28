@@ -50,6 +50,9 @@ router.route('/api/users/follow')
 router.route('/api/users/unfollow')
     .put(authCtrl.requireSignin, userCtrl.removeFollowing, userCtrl.removeFollower)
 
+/*Fetching users not followed*/
+router.route('/api/users/findpeople/:userId')
+    .get(authCtrl.requireSignin, userCtrl.findPeople)
 
 /*The route to read a user's information only needs authentication verification, whereas
 the update and delete routes should check for both authentication and authorization

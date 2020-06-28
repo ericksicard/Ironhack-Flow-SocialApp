@@ -262,6 +262,21 @@ const removeFollower = async (req, res) => {
     }
 }
 
+/*We will query the User collection in the database to find the users that are not in the current user's following list.*/
+const findPeople = async (req, res) => {
+    let following = req.profile.following
+    following.push(req.profile._id) //including the user id to not get the option of following himself
+    try {
+        let users = await User.find({ _id: { $nin: following }})
+        res.json(users)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
+
 export default { 
     create,
     userByID,
@@ -273,5 +288,6 @@ export default {
     addFollowing,
     addFollower,
     removeFollowing,
-    removeFollower
+    removeFollower,
+    findPeople
 }
