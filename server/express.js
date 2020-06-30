@@ -21,6 +21,7 @@ import helmet from 'helmet';
 import Template from './../template'
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
+import postRoutes from './routes/post.routes';
 import devBundle from './devBundle'; //comment out before building for production !!!
 
 
@@ -66,6 +67,7 @@ app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 the client-side.*/
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/', postRoutes)
 
 // Basic server-side rendering
 /*To render the relevant React components when the server receives requests to the frontend routes,
