@@ -85,3 +85,22 @@ const like = async (params, credentials, postId) => {
     }
     catch(err) { console.log(err) }
 }
+
+const unlike = async (params, credentials, postId) => {
+    try{
+        let response = await fetch('api/posts/unlike/', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            },
+            body: JSON.stringify({
+                postId: postId,
+                userId: params.userId
+            })
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}

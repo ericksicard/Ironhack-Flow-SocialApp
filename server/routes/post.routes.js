@@ -30,6 +30,9 @@ document. The request will be received at the api/posts/like route.*/
 router.route('/api/posts/like')
     .put(authCtrl.requireSignin, postCtrl.like)
 
+router.route('/api/posts/unlike')
+    .put(authCtrl.requireSignin, postCtrl.unlike)
+
 /*The delete route will check for authorization before calling remove on the post by
 ensuring the authenticated user and postedBy user are the same users. The isPoster method
 checks whether the signed-in user is the original creator of the post before executing

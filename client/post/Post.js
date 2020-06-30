@@ -18,7 +18,7 @@ import CommentIcon from '@material-ui/icons/Comment'
 import Divider from '@material-ui/core/Divider'
 
 import auth from './../auth/auth-helper'
-import {remove, like, unlike} from './api-post.js'
+import { remove, like, unlike } from './api-post.js'
 import Comments from './Comments'
 
 const useStyles = makeStyles(theme => ({
