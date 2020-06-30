@@ -19,7 +19,7 @@ import Divider from '@material-ui/core/Divider'
 
 import auth from './../auth/auth-helper'
 import PostList from './PostList'
-import {listNewsFeed} from './api-post.js'
+import { listNewsFeed } from './api-post.js'
 import NewPost from './NewPost'
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +43,28 @@ const useStyles = makeStyles(theme => ({
       const [posts, setPosts] = useState([])
       const jwt = auth.isAuthenticated()
 
+      /*This will retrieve the list of posts from the backend and set it to the state of the
+      Newsfeed component to initially load the posts that are rendered in the PostList component*/
+      useEffect( () => {
+          const abortController = new AbortController()
+          const signal = abortController.signal;
+
+          listNewsFeed(
+              { userId: jwt.user._id },
+              { t: jwt.token },
+              signal
+          )
+          .then( data => {
+              if (data.error) { console.log(data.error) }
+              else {
+                  setPosts(data)
+              }
+          })
+
+          return function cleanup() {
+              abortController.abort()
+          }
+      }, [])
 
       /*The addPost function will take the new post that was created in the NewPost component
       and add it to the posts in the state.*/
