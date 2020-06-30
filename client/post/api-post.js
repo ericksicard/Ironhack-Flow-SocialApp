@@ -34,3 +34,20 @@ const listByUser = async (params, credentials) => {
     }
     catch(err) { console.log(err) }
 }
+
+/*This method will send a multipart form submission using a FormData object that will
+contain the text field and the image file.*/
+const create = async (params, credentials, post) => {
+    try{
+        let response = await fetch('/api/posts/new/' + params.userId, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            },
+            body: post
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}
