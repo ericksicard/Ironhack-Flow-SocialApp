@@ -44,3 +44,5 @@ const listByUser = async (req, res) => {
         })
     }
 }
+
+export default { listNewsFeed, listByUser }

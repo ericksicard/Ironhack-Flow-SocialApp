@@ -27,6 +27,7 @@ import auth from '../auth/auth-helper';
 import { read, follow } from './api-user.js';
 import FollowProfileButton from './FollowProfileButton'
 import ProfileTabs from './../user/ProfileTabs'
+import { listByUser } from './../post/api-post.js'
 
 const useStyles = makeStyles(theme => ({
     root: theme.mixins.gutters({
@@ -56,6 +57,7 @@ export default function Profile({ match }) {
         redirectToSignin: false,
         following: false
     });
+    const [ posts, setPosts ] = useState([]);
     const jwt = auth.isAuthenticated();
     
     /*The Profile component should fetch user information and render the view with these details.
@@ -134,6 +136,18 @@ export default function Profile({ match }) {
         })
     }
 
+    /*This method calls the listByUser fetch method to load the user's posts*/
+    const loadPosts = (user) => {
+        listByUser(
+            { userId: user },
+            { t: jwt.token }
+        )
+        .then( data => {
+            if (data.error) { console.log( data.error )}
+            else { setPosts(data) }
+        })
+    }
+
     /*If the current user is not authenticated, he's gonna be redirected to the Sign In view.*/
     if ( values.redirectToSignin ) {
         return <Redirect to={'/signin'}/>
@@ -185,7 +199,7 @@ export default function Profile({ match }) {
                     />
                 </ListItem>
             </List>
-            <ProfileTabs user={values.user}/>
+            <ProfileTabs user={values.user} post={posts}/>
         </Paper>
     )    
 }

@@ -17,3 +17,20 @@ const listNewsFeed = async (params, credentials, signal) => {
     }
     catch(err) { console.log(err) }
 }
+
+/*This fetch method will load the required posts for PostList, which is added to the
+Profile view*/
+const listByUser = async (params, credentials) => {
+    try{
+        let response = await fetch('/api/posts/by/' + params.userId, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            }
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}

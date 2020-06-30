@@ -8,7 +8,7 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
 import FollowGrid from './../user/FollowGrid'
-//import PostList from './../post/PostList'
+import PostList from './../post/PostList'
 
 export default function ProfileTabs(props) {
     const [ tab, setTab ] = useState(0)
@@ -17,7 +17,6 @@ export default function ProfileTabs(props) {
         setTab(value)
     }
     
-    console.log( props.user.following )
     return (
         <div>
             <AppBar position='static' color='default'>
@@ -28,12 +27,14 @@ export default function ProfileTabs(props) {
                     textColor='primary'
                     variant='fullWidth'
                 >
+                    <Tab label='Posts' />
                     <Tab label='Following' />
                     <Tab label='Followers' />
                 </Tabs>
             </AppBar>
-            {tab === 0 && <TabContainer><FollowGrid people={props.user.following}/></TabContainer>}
-            {tab === 1 && <TabContainer><FollowGrid people={props.user.followers}/></TabContainer>}
+            {tab === 0 && <TabContainer><PostList  people={props.posts}/></TabContainer>}
+            {tab === 1 && <TabContainer><FollowGrid people={props.user.following}/></TabContainer>}
+            {tab === 2 && <TabContainer><FollowGrid people={props.user.followers}/></TabContainer>}
         </div>
     )
 }
@@ -41,7 +42,7 @@ export default function ProfileTabs(props) {
 ProfileTabs.propTypes = {
     user: PropTypes.object.isRequired,
     //removePostUpdate: PropTypes.func.isRequired,
-    //posts: PropTypes.array.isRequired
+    posts: PropTypes.array.isRequired
 }
 
 //HOC
