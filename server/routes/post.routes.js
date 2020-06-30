@@ -3,6 +3,7 @@ const router = express.Router();
 
 import authCtrl from '../controllers/auth.controller';
 import userCtrl from '../controllers/user.controller';
+import postCtrl from '../controllers/post.controller';
 
 /*This route path that will receive the request for retrieving Newsfeed posts for a specific user.
 We are using the :userID parameter in this route to specify the currently signed-in user. We will
@@ -20,7 +21,10 @@ router.route('/api/posts/by/:userId')
 router.route('/api/posts/new/:userId')
     .post(authCtrl.requireSignin, postCtrl.create)
 
-
+//Returning the photo associated to a post
+router.route('/api/posts/photo/:postId')
+    .get(postCtrl.photo)
 
 
 router.param('userId', userCtrl.userByID)
+router.param('postId', postCtrl.postByID)

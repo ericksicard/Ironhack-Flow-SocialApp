@@ -82,7 +82,37 @@ const create = async (req, res, next) => {
             })
         }
     })
-
 }
 
-export default { listNewsFeed, listByUser, create }
+//The photo controller will return the photo data stored in MongoDB
+const photo = (req, res, next) => {
+    return res.send(req.post.photo)
+}
+
+/*postByID will attach the post retrieved from the database to the request object so that
+it can be accessed by the next method.
+The attached post data in this implementation will also contain the ID and name of the
+postedBy user reference since we are invoking populate().
+*/
+const postByID = async (req, res, next, id) => {
+    try{
+        let post = Post.findById(id)
+                        .populate('postedBy', '_id name')
+                        .exec()
+
+        if (!post) {
+            return res.status(400).json({
+                error: 'Post not found'
+            })
+        }
+        req.post = post
+        next()
+    }
+    catch (err) {
+        return res.status(400).json({
+            error: "Could not retrieve user post"
+        })
+    }
+}
+
+export default { listNewsFeed, listByUser, create, photo, postByID }
