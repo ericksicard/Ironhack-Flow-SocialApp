@@ -25,3 +25,22 @@ const listNewsFeed = async (req, res) => {
         })
     }
 }
+
+/*The listByUser controller method will query the Post collection to find posts that have
+a matching reference in the postedBy field to the user specified in the userId param in
+the route*/
+const listByUser = async (req, res) => {
+    try{
+        let posts = await Post.find({ postedBy: req.profile._id })
+                                .populate('comments.postedBy', '_id, name')
+                                .populate('postedBy', '_id name')
+                                .sort('-created')
+                                .exec()
+        res.json()
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
