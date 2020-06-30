@@ -140,6 +140,24 @@ const remove = async (req, res) => {
     }
 }
 
+/*The post ID that's received in the request body will be used to find the specific
+Post document and update it by pushing the current user's ID to the likes array. */
+const like = async (req, res) => {
+    try{
+        let result = await Post.findByIdAndUpdate(
+            req.body.postId,
+            {$push: {likes: req.body.userId}},
+            {new: true}
+        )
+        res.json(result)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
+
 export default {
     listNewsFeed,
     listByUser,

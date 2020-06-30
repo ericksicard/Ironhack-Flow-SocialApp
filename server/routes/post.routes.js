@@ -25,6 +25,11 @@ router.route('/api/posts/new/:userId')
 router.route('/api/posts/photo/:postId')
     .get(postCtrl.photo)
 
+/*The like API will be a PUT request that will update the likes array in the Post
+document. The request will be received at the api/posts/like route.*/
+router.route('/api/posts/like')
+    .put(authCtrl.requireSignin, postCtrl.like)
+
 /*The delete route will check for authorization before calling remove on the post by
 ensuring the authenticated user and postedBy user are the same users. The isPoster method
 checks whether the signed-in user is the original creator of the post before executing
