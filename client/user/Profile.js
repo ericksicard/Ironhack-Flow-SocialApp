@@ -90,6 +90,7 @@ export default function Profile({ match }) {
                 the "following" value to the respective state*/
                 let following = checkFollow(data)
                 setValues({ ...values, user: data, following: following })
+                loadPosts(data._id)
             }
         })
 
