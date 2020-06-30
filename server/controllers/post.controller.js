@@ -115,4 +115,37 @@ const postByID = async (req, res, next, id) => {
     }
 }
 
-export default { listNewsFeed, listByUser, create, photo, postByID }
+/*The isPoster method checks whether the signed-in user is the original creator of
+the post before executing the next method.*/
+const isPoster = (req, res, next) => {
+    let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+    if (!isPoster) {
+        return res.status(403).json({
+            error: 'User is not authorized'
+        })
+    }
+    next()
+}
+
+const remove = async (req, res) => {
+    let post = req.post
+    try{
+        let deletedPost = await post.remove()
+        res.json(deletedPost)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+          })
+    }
+}
+
+export default {
+    listNewsFeed,
+    listByUser,
+    create,
+    photo,
+    postByID,
+    isPoster,
+    remove
+}

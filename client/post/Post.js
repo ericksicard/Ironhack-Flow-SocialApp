@@ -66,6 +66,22 @@ export default function Post(props) {
         comments: props.post.comments
     })
 
+    /*This method makes a fetch call to the delete post API and on success, updates the list
+    of posts in the state by executing the onRemove method, which is received as a prop
+    from the parent component.*/
+    const deletePost = () => {
+        remove(
+            { postId: props.post._id },
+            { t: jwt.token }
+        )
+        .then( data => {
+            if (data.error) { console.log(data.error) } 
+            else {
+                props.onRemove(props.post)
+            }
+        })
+    }
+
 
     return (
         <Card className={classes.card}>

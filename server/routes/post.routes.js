@@ -25,6 +25,12 @@ router.route('/api/posts/new/:userId')
 router.route('/api/posts/photo/:postId')
     .get(postCtrl.photo)
 
+/*The delete route will check for authorization before calling remove on the post by
+ensuring the authenticated user and postedBy user are the same users. The isPoster method
+checks whether the signed-in user is the original creator of the post before executing
+the next method. */
+router.route('/api/posts/:postId')
+    .delete(authCtrl.requireSignin, postCtrl.isPoster, postCtrl.remove)
 
 router.param('userId', userCtrl.userByID)
 router.param('postId', postCtrl.postByID)
