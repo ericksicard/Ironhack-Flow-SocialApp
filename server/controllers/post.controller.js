@@ -1,5 +1,9 @@
+import formidable from 'formidable'
+import cloudinary from '../../config/cloudinary-config'
+
 import errorHandler from '../helpers/dbErrorHandler';
 import Post from '../models/post.model'
+
 
 /*The listNewsFeed controller method will query the Post collection in the database
 to get the matching posts.
@@ -45,4 +49,40 @@ const listByUser = async (req, res) => {
     }
 }
 
-export default { listNewsFeed, listByUser }
+/* This method will use the formidable module to access the fields and the image file, if any.*/
+const create = async (req, res, next) => {
+    let form = new formidable.IncomingForm()
+    form.keepExtensions = true
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            return res.status(400).json({
+                error: 'Image could not be uploaded'
+            })
+        }
+        let post = new Post(fields);
+        post.createdBy = req.profile;
+        
+        if (files.photo) {
+            await cloudinary.uploader.upload(files.photo.path,
+                {use_filename: true,
+                folder: 'MERN_SocialApp/posts'},
+                function(err, result) {
+                    post.photo = result.url
+                })
+        }
+
+        try {
+            let result = await post.save();
+            res.json(result)
+        }
+        catch (err) {
+            return res.status(400).json({
+                error: errorHandler.getErrorMessage(err)
+            })
+        }
+    })
+
+}
+
+export default { listNewsFeed, listByUser, create }

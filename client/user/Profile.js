@@ -137,7 +137,11 @@ export default function Profile({ match }) {
         })
     }
 
-    /*This method calls the listByUser fetch method to load the user's posts*/
+    /*This method calls the listByUser fetch method to load the user's posts.
+    The loadPosts method will be called with the user ID of the user whose profile is being loaded, after the user
+    details have been fetched from the server in the useEffect() hook function. The posts that are loaded for the
+    specific user are set to the state and rendered in the PostList component that's added to the Profile component.
+    */
     const loadPosts = (user) => {
         listByUser(
             { userId: user },

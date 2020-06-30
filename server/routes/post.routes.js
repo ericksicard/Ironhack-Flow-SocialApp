@@ -12,9 +12,15 @@ these to the request object that is accessed in the listNewsFeed post controller
 router.route('/api/posts/feed/:userId')
     .get(authCtrl.requireSignin, postCtrl.listNewsFeed)
 
-
 /*This route path that will receive the request for retrieving posts that have been shared by a specific user.*/
 router.route('/api/posts/by/:userId')
     .get(authCtrl.requireSignin, postCtrl.listByUser)
+
+/*Creating a new post*/
+router.route('/api/posts/new/:userId')
+    .post(authCtrl.requireSignin, postCtrl.create)
+
+
+
 
 router.param('userId', userCtrl.userByID)
