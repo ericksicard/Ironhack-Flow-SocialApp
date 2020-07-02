@@ -75,8 +75,25 @@ export default function Comments(props) {
         }
     }
 
-    const deleteComment = comment => {
-        
+    /*When a comment's delete button is clicked by the commenter, the Comments component will call
+    the deleteComment method to fetch the uncomment API and update the comments, along with the
+    comment count, when the comment is successfully removed from the server.
+    On successfully removing a comment from the backend, the updateComments method that's sent in
+    the props from the Post component will be invoked. This will update the state of the Post component
+    to update the view.*/
+    const deleteComment = (event, comment) => {
+        uncomment(
+            { userId: jwt.user._id },
+            { t: jwt.token },
+            props.postId,
+            comment
+        )
+        .then( data => {
+            if (data.error) { console.log(data.error) }
+            else {
+                props.updateComments(data.comments)
+            }
+        })
     }
 
     /*commentBody renders the content, including the name of the commenter linked to their profile,
@@ -94,7 +111,7 @@ export default function Comments(props) {
                 <span className={classes.commentDate}>
                     { (new Date(comment.created)).toDateString() } |
                     { auth.isAuthenticated().user._id == comment.postedBy._id && 
-                        <Icon onClick={deleteComment(comment)} className={classes.commentDelete}>delete</Icon>
+                        <Icon onClick={ event => deleteComment(event, comment)} className={classes.commentDelete}>delete</Icon>
                     }
                 </span>
             </p>
