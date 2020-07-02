@@ -58,13 +58,18 @@ export default function Post(props) {
 
     /*This method checks whether the currently signed-in user is referenced in the post's
     likes array or not*/
-    const checkLike = (like) => {
+    const checkLike = (likes) => {
         const match = likes.indexOf(jwt.user._id) !== -1
         return match;
     }
 
-    /*This checkLike function is called while setting the initial value of the like state
-    variable, which keeps track of whether the current user liked the given post or not.*/
+    /*This "checkLike" function is called while setting the initial value of the like state
+    variable, which keeps track of whether the current user liked the given post or not.
+    The initial state of comments in the Post component is set when the Post component mounts
+    and receives the post data as props. The comments that are set here are sent as props to
+    the Comments component and used to render the comment count next to the likes action in the
+    action bar of the Post layout.
+    */
     const [ values, setValues ] = useState({
         like: checkLike(props.post.likes),
         likes: props.post.likes.length,
@@ -103,6 +108,14 @@ export default function Post(props) {
                 setValues({ ...values, like: !values.like, likes: data.likes.length })
             }
         })
+    }
+
+    /*The updateComments method will allow the comments and comment count to be updated when a comment is
+    added or deleted, is defined in the Post component and passed as a prop to the Comments component.
+    This method takes the updated list of comments as a parameter and updates the state that holds the list
+    of comments rendered in the view.*/
+    const updateComments = (comments) => {
+        setValues({ ...values, comments: comments })
     }
 
     return (
