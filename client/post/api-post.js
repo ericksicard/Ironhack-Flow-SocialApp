@@ -126,3 +126,25 @@ const comment = async (params, credentials, postId, comment) => {
     }
     catch(err) { console.log(err) }
 }
+
+/*This fetch method takes the current user's ID, the post ID, and the deleted comment object to send
+with the uncomment request*/
+const uncomment = async (params, credentials, postId, comment) => {
+    try{
+        let response = await fetch('api/posts/uncomment/', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            },
+            body: JSON.stringify({
+                postId: postId,
+                userId: params.userId,
+                comment: comment
+            })
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}

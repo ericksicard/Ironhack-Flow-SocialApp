@@ -201,6 +201,27 @@ const comment = async (req, res) => {
     }
 }
 
+/*The uncomment controller method will find the relevant post by ID and pull the
+comment with the deleted comment's ID from the comments array in the post*/
+const uncomment = async (req, res) => {
+    let comment = req.body.comment
+
+    try {
+        let result = await Post.findByIdAndUpdate(
+            req.body.postId,
+            {$pull: {comment: {_id: comment._id}}},
+            {new: true})
+            .populate('comment.postedBy', '_id name')
+            .populate('postedBy', '_id name')
+            .exec()
+        res.json(result)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
 
 export default {
     listNewsFeed,
@@ -212,5 +233,6 @@ export default {
     remove,
     like,
     unlike,
-    comment
+    comment,
+    uncomment
 }

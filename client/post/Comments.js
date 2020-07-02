@@ -75,6 +75,10 @@ export default function Comments(props) {
         }
     }
 
+    const deleteComment = comment => {
+        
+    }
+
     /*commentBody renders the content, including the name of the commenter linked to their profile,
     the comment text, and the date of comment creation.
     It will also render a delete option for the comment if the postedBy reference of the comment matches
