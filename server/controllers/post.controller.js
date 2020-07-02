@@ -176,6 +176,32 @@ const unlike = async (req, res) => {
     }
 }
 
+/*The comment controller method will find the relevant post to be updated by its ID and push
+the comment object that's received in the request body to the comments array of the post.
+In the response, the updated post object will be sent back with details of the postedBy users
+populated in the post and in the comments.*/
+const comment = async (req, res) => {
+    let comment = req.body.comment
+    comment.postedBy = req.body.userId
+
+    try {
+        let result = await Post.findByIdAndUpdate(
+            req.body.postId,
+            {$push: {comment: comment}},
+            {new: true})
+            .populate('comment.postedBy', '_id name')
+            .populate('postedBy', '_id name')
+            .exec()
+        res.json(result)
+    }
+    catch(err) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(err)
+        })
+    }
+}
+
+
 export default {
     listNewsFeed,
     listByUser,
@@ -185,5 +211,6 @@ export default {
     isPoster,
     remove,
     like,
-    unlike
+    unlike,
+    comment
 }

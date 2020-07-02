@@ -40,5 +40,9 @@ the next method. */
 router.route('/api/posts/:postId')
     .delete(authCtrl.requireSignin, postCtrl.isPoster, postCtrl.remove)
 
+//Adding a comment to a post
+router.route('/api/posts/comment')
+    .put(authCtrl.requireSignin, postCtrl.comment)
+
 router.param('userId', userCtrl.userByID)
 router.param('postId', postCtrl.postByID)

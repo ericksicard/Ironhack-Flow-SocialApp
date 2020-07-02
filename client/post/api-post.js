@@ -104,3 +104,25 @@ const unlike = async (params, credentials, postId) => {
     }
     catch(err) { console.log(err) }
 }
+
+/*This fetch method takes the current user's ID, the post ID, and the comment object from the view, and
+sends it with the add comment request.*/
+const comment = async (params, credentials, postId, comment) => {
+    try{
+        let response = await fetch('api/posts/comment/', {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + credentials.t
+            },
+            body: JSON.stringify({
+                postId: postId,
+                userId: params.userId,
+                comment: comment
+            })
+        })
+        return await response.json()
+    }
+    catch(err) { console.log(err) }
+}

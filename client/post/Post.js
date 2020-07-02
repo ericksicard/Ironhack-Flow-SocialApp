@@ -56,10 +56,15 @@ export default function Post(props) {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
 
+    /*This method checks whether the currently signed-in user is referenced in the post's
+    likes array or not*/
     const checkLike = (like) => {
-        const match = like.indexOf(jwt.user._id) !== -1
+        const match = likes.indexOf(jwt.user._id) !== -1
         return match;
     }
+
+    /*This checkLike function is called while setting the initial value of the like state
+    variable, which keeps track of whether the current user liked the given post or not.*/
     const [ values, setValues ] = useState({
         like: checkLike(props.post.likes),
         likes: props.post.likes.length,
@@ -82,6 +87,23 @@ export default function Post(props) {
         })
     }
 
+    /*To handle clicks on the like and unlike buttons, we will set up a clickLike method that will
+    call the appropriate fetch method based on whether it is a "like" or "unlike" action, and then
+    update the state of the like and likes count for the post.*/
+    const clickLike = () => {
+        let callApi = values.like ? unlike : like
+        callApi(
+            { userId: jwt.user._id },
+            { t: jwt.token },
+            props.post._id
+        )
+        .then( data => {
+            if (data.error) { console.log(data.error) }
+            else {
+                setValues({ ...values, like: !values.like, likes: data.likes.length })
+            }
+        })
+    }
 
     return (
         <Card className={classes.card}>
@@ -123,7 +145,14 @@ export default function Post(props) {
 
             {{/*The actions section will contain an interactive "like" option with a display of the
                 total number of likes on the post and a comment icon with the total number of
-                comments on the post.*/}}
+                comments on the post.
+                The like value that's set in the state using the checkLike method can be used to
+                render a heart outline button or a full heart button. A heart outline button will render
+                if the user has not liked the post; clicking it will make a call to the like API, show the
+                full heart button, and increment the likes count. The full heart button will indicate
+                the current user has already liked this post; clicking this will call the unlike API,
+                render the heart outline button, and decrement the likes count.
+                */}}
              <CardActions>
                  {  values.like
                     ? <IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
