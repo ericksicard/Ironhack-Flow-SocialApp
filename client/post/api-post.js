@@ -3,7 +3,7 @@
 is added as a child component to the Newsfeed component. So, this fetch needs to be
 called in the useEffect hook in the Newsfeed component.*/
 const listNewsFeed = async (params, credentials, signal) => {
-    try{
+    try {
         let response = await fetch('/api/posts/feed/' + params.userId, {
             method: 'GET',
             signal: signal,
@@ -11,8 +11,8 @@ const listNewsFeed = async (params, credentials, signal) => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + credentials.t
-            }
-        })
+            }            
+        })    
         return await response.json()
     }
     catch(err) { console.log(err) }
@@ -53,7 +53,7 @@ const create = async (params, credentials, post) => {
 }
 
 const remove = async (params, credentials) => {
-    try{
+    try {
         let response = await fetch('/api/posts/' + params.postId, {
             method: 'DELETE',
             headers: {
@@ -62,14 +62,14 @@ const remove = async (params, credentials) => {
                 'Authorization': 'Bearer ' + credentials.t
             }
         })
-        return await response.json()
-    }
+      return await response.json()
+    } 
     catch(err) { console.log(err) }
-}
+  }
 
 const like = async (params, credentials, postId) => {
     try{
-        let response = await fetch('api/posts/like/', {
+        let response = await fetch('/api/posts/like/', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -88,7 +88,7 @@ const like = async (params, credentials, postId) => {
 
 const unlike = async (params, credentials, postId) => {
     try{
-        let response = await fetch('api/posts/unlike/', {
+        let response = await fetch('/api/posts/unlike/', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -109,7 +109,7 @@ const unlike = async (params, credentials, postId) => {
 sends it with the add comment request.*/
 const comment = async (params, credentials, postId, comment) => {
     try{
-        let response = await fetch('api/posts/comment/', {
+        let response = await fetch('/api/posts/comment/', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -117,8 +117,8 @@ const comment = async (params, credentials, postId, comment) => {
                 'Authorization': 'Bearer ' + credentials.t
             },
             body: JSON.stringify({
+                userId:params.userId,
                 postId: postId,
-                userId: params.userId,
                 comment: comment
             })
         })
@@ -131,7 +131,7 @@ const comment = async (params, credentials, postId, comment) => {
 with the uncomment request*/
 const uncomment = async (params, credentials, postId, comment) => {
     try{
-        let response = await fetch('api/posts/uncomment/', {
+        let response = await fetch('/api/posts/uncomment/', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -139,12 +139,23 @@ const uncomment = async (params, credentials, postId, comment) => {
                 'Authorization': 'Bearer ' + credentials.t
             },
             body: JSON.stringify({
+                userId:params.userId,
                 postId: postId,
-                userId: params.userId,
                 comment: comment
             })
         })
         return await response.json()
     }
     catch(err) { console.log(err) }
+}
+
+export {
+    listNewsFeed,
+    listByUser,
+    create,
+    remove,
+    like,
+    unlike,
+    comment,
+    uncomment
 }

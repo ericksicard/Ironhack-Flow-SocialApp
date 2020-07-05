@@ -38,32 +38,33 @@ const useStyles = makeStyles(theme => ({
     }
   }))
 
-  export default function NewsFeed() {
+  export default function Newsfeed() {
       const classes = useStyles()
-      const [posts, setPosts] = useState([])
+      const [ posts, setPosts ] = useState([])
       const jwt = auth.isAuthenticated()
 
       /*This will retrieve the list of posts from the backend and set it to the state of the
       Newsfeed component to initially load the posts that are rendered in the PostList component*/
       useEffect( () => {
-          const abortController = new AbortController()
-          const signal = abortController.signal;
+        const abortController = new AbortController()
+        const signal = abortController.signal
 
-          listNewsFeed(
-              { userId: jwt.user._id },
-              { t: jwt.token },
-              signal
-          )
-          .then( data => {
-              if (data.error) { console.log(data.error) }
-              else {
-                  setPosts(data)
-              }
+        listNewsFeed(
+            { userId: jwt.user._id },
+            { t: jwt.token },
+            signal
+            )
+            .then( (data) => {
+                if (data.error) { console.log(data.error) }
+                else {
+                    setPosts(data)
+                }
           })
 
-          return function cleanup() {
-              abortController.abort()
+          return function cleanup(){
+            abortController.abort()
           }
+
       }, [])
 
       /*The addPost function will take the new post that was created in the NewPost component
@@ -84,12 +85,14 @@ const useStyles = makeStyles(theme => ({
       }
 
       return (
-          <Card>
-              <Typography type='title'>Newsfeed</Typography>
-              <Divider />
-              <NewPost addUpdate={addPost}/>
-              <Divider />
-              <PostList removeUpdate={removePost} posts={posts}/>
-          </Card>
+        <Card className={classes.card}>
+            <Typography type="title" className={classes.title}>
+                Newsfeed
+            </Typography>
+            <Divider/>
+            <NewPost addUpdate={addPost}/>
+            <Divider/>
+            <PostList removeUpdate={removePost} posts={posts}/>
+        </Card>
       )
   }

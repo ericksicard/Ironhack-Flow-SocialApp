@@ -56,7 +56,7 @@ export default function Profile({ match }) {
         },
         redirectToSignin: false,
         following: false
-    });
+    })
     const [ posts, setPosts ] = useState([]);
     const jwt = auth.isAuthenticated();
     
@@ -149,8 +149,19 @@ export default function Profile({ match }) {
         )
         .then( data => {
             if (data.error) { console.log( data.error )}
-            else { setPosts(data) }
+            else { 
+                setPosts(data)
+            }
         })
+    }
+
+    /*The Profile component provides a "removePost" function, similar to the Newsfeed component, as a prop to the
+    PostList component so that the list of posts can be updated if a post is removed.*/
+    const removePost = (post) => {
+        const updatedPosts = posts
+        const index = updatedPosts.indexOf(post)
+        updatedPosts.splice(index, 1)
+        setPosts(updatedPosts)
     }
 
     /*If the current user is not authenticated, he's gonna be redirected to the Sign In view.*/
@@ -177,7 +188,7 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar src={values.user.photo} />
+                        <Avatar src={values.user.photo} className={classes.bigAvatar} />
                     </ListItemAvatar>
                     <ListItemText 
                         primary={values.user.name}
@@ -204,7 +215,7 @@ export default function Profile({ match }) {
                     />
                 </ListItem>
             </List>
-            <ProfileTabs user={values.user} post={posts}/>
+            <ProfileTabs user={values.user} posts={posts} removePostUpdate={removePost} />
         </Paper>
     )    
 }

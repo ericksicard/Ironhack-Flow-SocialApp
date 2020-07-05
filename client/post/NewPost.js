@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function NewPost(props) {
     const classes = useStyles()
-    const [ values, setValues ] = useState({
+    const [values, setValues] = useState({
         text: '',
         photo: '',
         error: '',
@@ -72,9 +72,9 @@ export default function NewPost(props) {
     })
     const jwt = auth.isAuthenticated()
 
-    useEffect( () => {
-        setValues({ ...values, user: auth.isAuthenticated.user })
-    })
+    useEffect(() => {
+        setValues({ ...values, user: auth.isAuthenticated().user })
+    }, [])
 
     /*The NewPost component is added as a child component in the Newsfeed and given
     the addUpdate method as a prop. On successful post creation, the form view is emptied
@@ -107,12 +107,11 @@ export default function NewPost(props) {
         setValues({ ...values, [name]: value })
     }
 
-
     return (
         <div className={classes.root}>
             <Card className={classes.card}>
                 <CardHeader 
-                    avatar={ <Avatar src={values.user.photo}/>}
+                    avatar={ <Avatar src={values.user.photo} />}
                     title={values.user.name}
                     className={classes.cardHeader}
                 />

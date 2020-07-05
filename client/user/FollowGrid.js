@@ -43,7 +43,6 @@ export default function FollowGrid(props) {
         <div className={classes.root}>
             <GridList cellHeight={160} className={classes.gridList} cols={4}>
                 {props.people.map( (person, i) => {
-                    console.log(person.photo)
                     return <GridListTile style={{'height':120}} key={i}>
                         <Link to={'/user/' + person._id}>
                             <Avatar src={person.photo} className={classes.bigAvatar} />

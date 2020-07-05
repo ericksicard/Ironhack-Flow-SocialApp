@@ -14,11 +14,12 @@ listed first. Each post will also contain the id and name of the user who create
 post and of the users who left comments on the post.
 */
 const listNewsFeed = async (req, res) => {
-    let following = req.profile.following;
+    let following = req.profile.following
     following.push(req.profile._id) //this will include the posts of the signed-in user
     try{
         let posts = await Post.find({ postedBy: { $in: req.profile.following }})
-                                .populate('comments.postedBy', '_id name')
+                                .populate('comments.postedBy', '_id name photo')
+                                .populate('postedBy', '_id name photo')
                                 .sort('-created')
                                 .exec()
         res.json(posts)
@@ -36,11 +37,11 @@ the route*/
 const listByUser = async (req, res) => {
     try{
         let posts = await Post.find({ postedBy: req.profile._id })
-                                .populate('comments.postedBy', '_id, name')
-                                .populate('postedBy', '_id name')
+                                .populate('comments.postedBy', '_id, name photo')
+                                .populate('postedBy', '_id name photo')
                                 .sort('-created')
                                 .exec()
-        res.json()
+        res.json(posts)
     }
     catch(err) {
         return res.status(400).json({
@@ -61,7 +62,7 @@ const create = async (req, res, next) => {
             })
         }
         let post = new Post(fields);
-        post.createdBy = req.profile;
+        post.postedBy = req.profile;
         
         if (files.photo) {
             await cloudinary.uploader.upload(files.photo.path,
@@ -96,10 +97,9 @@ postedBy user reference since we are invoking populate().
 */
 const postByID = async (req, res, next, id) => {
     try{
-        let post = Post.findById(id)
-                        .populate('postedBy', '_id name')
+        let post = await Post.findById(id)
+                        .populate('postedBy', '_id name photo')
                         .exec()
-
         if (!post) {
             return res.status(400).json({
                 error: 'Post not found'
@@ -119,13 +119,13 @@ const postByID = async (req, res, next, id) => {
 the post before executing the next method.*/
 const isPoster = (req, res, next) => {
     let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
-    if (!isPoster) {
-        return res.status(403).json({
-            error: 'User is not authorized'
-        })
+    if(!isPoster){
+      return res.status('403').json({
+        error: "User is not authorized"
+      })
     }
     next()
-}
+  }
 
 const remove = async (req, res) => {
     let post = req.post
@@ -187,9 +187,9 @@ const comment = async (req, res) => {
     try {
         let result = await Post.findByIdAndUpdate(
             req.body.postId,
-            {$push: {comment: comment}},
+            {$push: {comments: comment}},
             {new: true})
-            .populate('comment.postedBy', '_id name')
+            .populate('comments.postedBy', '_id name')
             .populate('postedBy', '_id name')
             .exec()
         res.json(result)
@@ -209,9 +209,9 @@ const uncomment = async (req, res) => {
     try {
         let result = await Post.findByIdAndUpdate(
             req.body.postId,
-            {$pull: {comment: {_id: comment._id}}},
+            {$pull: {comments: {_id: comment._id}}},
             {new: true})
-            .populate('comment.postedBy', '_id name')
+            .populate('comments.postedBy', '_id name')
             .populate('postedBy', '_id name')
             .exec()
         res.json(result)

@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 import AppBar from '@material-ui/core/AppBar'
@@ -32,7 +32,7 @@ export default function ProfileTabs(props) {
                     <Tab label='Followers' />
                 </Tabs>
             </AppBar>
-            {tab === 0 && <TabContainer><PostList  people={props.posts}/></TabContainer>}
+            {tab === 0 && <TabContainer><PostList removeUpdate={props.removePostUpdate} posts={props.posts}/></TabContainer>}
             {tab === 1 && <TabContainer><FollowGrid people={props.user.following}/></TabContainer>}
             {tab === 2 && <TabContainer><FollowGrid people={props.user.followers}/></TabContainer>}
         </div>
@@ -41,19 +41,19 @@ export default function ProfileTabs(props) {
 
 ProfileTabs.propTypes = {
     user: PropTypes.object.isRequired,
-    //removePostUpdate: PropTypes.func.isRequired,
+    removePostUpdate: PropTypes.func.isRequired,
     posts: PropTypes.array.isRequired
 }
 
 //HOC
 const TabContainer = (props) => {
     return (
-        <Typography component='div' style={{ padding: 8 * 2 }}>
-            {props.children}
-        </Typography>
+      <Typography component="div" style={{ padding: 8 * 2 }}>
+        {props.children}
+      </Typography>
     )
 }
-
+  
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired
 }

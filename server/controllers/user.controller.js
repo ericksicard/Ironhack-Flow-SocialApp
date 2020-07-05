@@ -141,7 +141,6 @@ const update = (req, res) => {
             },
             function(err, result) {
                 user.photo = result.url
-                //console.log('console1: ', {user})
             }
         )
 
@@ -149,7 +148,6 @@ const update = (req, res) => {
             await user.save();
             req.profile.hashed_password = undefined;
             req.profile.salt = undefined;
-            //console.log('console2: ', {user})
             res.json(user);
         }
         catch (err) {
@@ -185,7 +183,7 @@ const remove = async (req, res) => {
 otherwise, we'll call next() to return the default photo. */
 const photo = (req, res, next) => {
     //if (req.profile.photo) {
-        //res.set('Content-Type', 'text/plain')
+        res.set('Content-Type', 'text/plain')
         return res.send(req.profile.photo)
     //}
     //next()

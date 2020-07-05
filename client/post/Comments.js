@@ -48,6 +48,10 @@ export default function Comments(props) {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
     const [ text, setText ] = useState('')
+    
+    const handleChange = event => {
+        setText(event.target.value)
+        }
 
     /*The text will be stored in the state when the value changes, and on the onKeyDown
     event, the addComment method will call the "comment" fetch method if the Enter key is
@@ -56,8 +60,8 @@ export default function Comments(props) {
     This will be executed when the new comment is added in order to update the comments list and
     the comment count in the Post view.
     */
-    const addComment = event => {
-        if (event.code == 13 && event.target.value) {
+    const addComment = (event) => {
+        if (event.keyCode == 13 && event.target.value) {
             event.preventDefault()
             comment(
                 { userId: jwt.user._id },
@@ -101,17 +105,17 @@ export default function Comments(props) {
     It will also render a delete option for the comment if the postedBy reference of the comment matches
     the currently signed-in user. 
     */
-    const commentBody = comment => {
+    const commentBody = item => {
         return (
             <p className={classes.commentText}>
-                <Link to={'/user/' + comment.postedBy._id}>
-                    {comment.postedBy.name}
-                </Link> <br/>
-                {comment.text}
+                <Link to={"/user/" + item.postedBy._id}>
+                    {item.postedBy.name}
+                </Link><br/>
+                {item.text}
                 <span className={classes.commentDate}>
-                    { (new Date(comment.created)).toDateString() } |
-                    { auth.isAuthenticated().user._id == comment.postedBy._id && 
-                        <Icon onClick={ event => deleteComment(event, comment)} className={classes.commentDelete}>delete</Icon>
+                    {(new Date(item.created)).toDateString()} |
+                    {auth.isAuthenticated().user._id === item.postedBy._id &&
+                        <Icon onClick={event => deleteComment(event, item)} className={classes.commentDelete}>delete</Icon>
                     }
                 </span>
             </p>
@@ -122,15 +126,15 @@ export default function Comments(props) {
         <div>
             <CardHeader 
                 avatar = { <Avatar 
-                            src={'/api/users/photo/' + auth.isAuthenticated().user._id}
+                            src={jwt.user.photo}
                             className={classes.smallAvatar}
                             />                            
                         }
                 title = { <TextField
-                            onKeyDown={addComment}
+                            onKeyDown={ event => addComment(event) }
                             multiline
                             value={text}
-                            onChange={handleChange}
+                            onChange={ event => handleChange(event) }
                             placeholder='Write something...'
                             className={classes.commentField}
                             margin='normal'
@@ -139,22 +143,25 @@ export default function Comments(props) {
                 className = {classes.cardHeader}
             />
 
-            {{/*The Comments component receives the list of comments for the specific post as props
-            from the Post component. Then, it iterates over the individual comments to render the
-            details of the commenter and the comment content*/}}
-            {props.comments.map( (comment, i) => {
+            {props.comments.map( (item, i) => {
                 return <CardHeader
-                        avatar = { <Avatar 
-                            src={'/api/users/photo/' + comment.postedBy._id}
-                            className={classes.smallAvatar}
-                            />                            
-                        }
-                        title = { commentBody(comment) }
-                        className = {classes.cardHeader}
-                        key = {i}
-                    />
+                            avatar = { <Avatar 
+                                src={item.postedBy.photo}
+                                className={classes.smallAvatar}
+                                />                            
+                            }
+                            title = { commentBody(item) }
+                            className = {classes.cardHeader}
+                            key = {i}
+                        />
                 })
             }
         </div>
     )
+}
+
+Comments.propTypes = {
+    postId: PropTypes.string.isRequired,
+    comments: PropTypes.array.isRequired,
+    updateComments: PropTypes.func.isRequired
 }

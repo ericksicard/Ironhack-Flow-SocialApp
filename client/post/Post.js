@@ -59,7 +59,7 @@ export default function Post(props) {
     /*This method checks whether the currently signed-in user is referenced in the post's
     likes array or not*/
     const checkLike = (likes) => {
-        const match = likes.indexOf(jwt.user._id) !== -1
+        let match = likes.indexOf(jwt.user._id) !== -1
         return match;
     }
 
@@ -115,17 +115,14 @@ export default function Post(props) {
     This method takes the updated list of comments as a parameter and updates the state that holds the list
     of comments rendered in the view.*/
     const updateComments = (comments) => {
-        setValues({ ...values, comments: comments })
+        setValues({...values, comments: comments})
     }
 
     return (
         <Card className={classes.card}>
-            {{/*The header will contain information such as the name, avatar, and link to the profile
-                of the user who posted, as well as the date the post was created.
-                It will also conditionally show a delete button if the signed-in user is viewing their
-                own post.*/}}
+            
             <CardHeader
-                avatar={<Avatar src={'/api/users/photo/' + props.post.postedBy._id}/>}
+                avatar={<Avatar src={props.post.postedBy.photo}/>}
                 action={ props.post.postedBy._id === auth.isAuthenticated().user._id && 
                     <IconButton onClick={deletePost}>
                         <DeleteIcon />
@@ -136,12 +133,10 @@ export default function Post(props) {
                         {props.post.postedBy.name}
                     </Link>
                 }
-                subheader={ (new Date(props.post.created)).toDateString() }
+                subheader={(new Date(props.post.created)).toDateString()}
                 className={classes.cardHeader}
             />
 
-            {{/*The content section will show the text of the post and the image if the post contains a
-                photo.*/}}
             <CardContent className={classes.cardContent}>
                 <Typography component='p' className={classes.text}>
                     {props.post.text}
@@ -150,23 +145,13 @@ export default function Post(props) {
                     (<div className={classes.photo}>
                         <img
                             className={classes.media}
-                            src={'/api/posts/photo/' + props.post._id}
+                            src={props.post.photo}
                         />
                     </div>)
                 }
             </CardContent>
 
-            {{/*The actions section will contain an interactive "like" option with a display of the
-                total number of likes on the post and a comment icon with the total number of
-                comments on the post.
-                The like value that's set in the state using the checkLike method can be used to
-                render a heart outline button or a full heart button. A heart outline button will render
-                if the user has not liked the post; clicking it will make a call to the like API, show the
-                full heart button, and increment the likes count. The full heart button will indicate
-                the current user has already liked this post; clicking this will call the unlike API,
-                render the heart outline button, and decrement the likes count.
-                */}}
-             <CardActions>
+            <CardActions>
                  {  values.like
                     ? <IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
                         <FavoriteIcon />
@@ -185,4 +170,9 @@ export default function Post(props) {
              <Comments postId={props.post._id} comments={values.comments} updateComments={updateComments}/>
         </Card>
     )
+}
+
+Post.propTypes = {
+    post: PropTypes.object.isRequired,
+    onRemove: PropTypes.func.isRequired
 }
