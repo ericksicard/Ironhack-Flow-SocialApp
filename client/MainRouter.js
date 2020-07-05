@@ -21,8 +21,6 @@ import PrivateRoute from './auth/PrivateRoute';
 
 const MainRouter = () => (
     <div>
-        {/*To have the Menu navigation bar present in all the views, we need to add it to the
-        MainRouter before all the other routes, and outside the Switch component.*/}
         <Menu/>
         <Switch>
             <Route exact path='/' component={Home} />
