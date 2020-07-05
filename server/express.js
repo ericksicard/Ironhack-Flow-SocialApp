@@ -22,7 +22,7 @@ import Template from './../template'
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import postRoutes from './routes/post.routes';
-import devBundle from './devBundle'; //comment out before building for production !!!
+//import devBundle from './devBundle'; //comment out before building for production !!!
 
 
 // MODULES FOR SERVER-SIDE RENDERING
@@ -46,7 +46,7 @@ const app = express();
 
 /*In development mode, when this line is executed, Webpack will compile and bundle the React
 code to place it in dist/bundle.js.*/
-devBundle.compile(app);     //comment out before building for production !!!
+//devBundle.compile(app);     //comment out before building for production !!!
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
