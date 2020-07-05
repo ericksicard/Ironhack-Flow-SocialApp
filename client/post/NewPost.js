@@ -111,7 +111,7 @@ export default function NewPost(props) {
         <div className={classes.root}>
             <Card className={classes.card}>
                 <CardHeader 
-                    avatar={ <Avatar src={values.user.photo} />}
+                    avatar={ <Avatar src={auth.isAuthenticated().user.photo} />}
                     title={values.user.name}
                     className={classes.cardHeader}
                 />
